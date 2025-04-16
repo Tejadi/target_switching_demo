@@ -16,7 +16,7 @@ class CasADiEgoAgent:
         self.obstacles = obstacles
         self.observation_interval = 0.2
         self.observation_timer = 0
-        self.estimator = ValiantEstimator(confidence_threshold=0.95)
+        self.estimator = ValiantEstimator(target_bound)
         
         self.mpc = CasADiMPC(target, self.estimator, obstacles)
         
@@ -43,6 +43,7 @@ class CasADiEgoAgent:
         self.collision_with_obstacle = False
         self.sufficient_samples = False
         self.using_conservative_trajectory = True
+        self.estimator = ValiantEstimator(self.target_bound)
         
     def update(self, dt):
         self.position_history.append((self.x, self.y))
@@ -149,5 +150,7 @@ class CasADiEgoAgent:
         pygame.draw.circle(surface, color, (int(self.x), int(self.y)), self.radius)
         
         pygame.draw.circle(surface, YELLOW, self.goal_pos, 15, 2)
-        
-        pygame.draw.circle(surface, (230, 230, 230), (int(self.x), int(self.y)), 250, 1)
+        if self.using_conservative_trajectory:
+            pygame.draw.circle(surface, (230, 230, 230), (int(self.x), int(self.y)), 200, 1)
+        else:
+            pygame.draw.circle(surface, (230, 230, 230), (int(self.x), int(self.y)), 100, 1)
