@@ -1,0 +1,18 @@
+import pygame
+
+WIDTH, HEIGHT = 1000, 700
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (200, 60, 60)
+GREEN = (60, 180, 60)
+BLUE = (60, 60, 200)
+YELLOW = (200, 200, 60)
+CYAN = (60, 200, 200)
+MAGENTA = (200, 60, 200)
+ORANGE = (255, 165, 0)
+PURPLE = (128, 0, 128)
+GRAY = (120, 120, 120)
+LIGHT_GRAY = (200, 200, 200)
+DARK_GRAY = (80, 80, 80)
+
+pygame.init()
