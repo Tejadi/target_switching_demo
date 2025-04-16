@@ -4,6 +4,8 @@ from constants import GREEN, WIDTH, HEIGHT
 
 class TargetAgent:
     def __init__(self, x, y, radius=15):
+        self.origin_x = x
+        self.origin_y = y
         self.x = x
         self.y = y
         self.radius = radius
@@ -17,6 +19,16 @@ class TargetAgent:
         self.position_history = []
         self.max_history = 100
         self.stopped = False
+
+    def reset(self):
+        self.x = self.origin_x
+        self.y = self.origin_y
+        self.vx = 50
+        self.vy = 0
+        self.mode_history = []
+        self.position_history = []
+        self.current_mode_idx = 0
+        self.switch_timer = 0
         
     def add_mode(self, mode):
         self.modes.append(mode)

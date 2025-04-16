@@ -49,7 +49,7 @@ def main():
     pygame.display.set_caption("CasADi MPC with Valiant Estimation and Reduced Obstacles")
     
     target, ego, obstacles = setup_simulation()
-    
+
     clock = pygame.time.Clock()
     font = pygame.font.SysFont(None, 24)
     
@@ -57,6 +57,7 @@ def main():
     legend_items = create_standard_legend()
     completed_runs = 0
     runtimes = []
+    collision_counter = 0
     while completed_runs < 100:
         running = True
         dt = 0.016
@@ -84,13 +85,16 @@ def main():
                 reached_goal_time = reset_timer
                 runtimes.append(reached_goal_time)
                 completed_runs+=1
+                running = False
                 ego.reset()
                 target.stopped = False
                 reset_timer = 0
+                target.reset()
 
             reset_timer += dt
             if reset_timer >= reset_interval or ego.collision or ego.collision_with_obstacle:
                 if ego.collision or ego.collision_with_obstacle:
+                    collision_counter += 1
                     pygame.time.delay(1000)
 
                 if not ego.at_goal:
@@ -126,7 +130,8 @@ def main():
 
             if dt > 0:
                 clock.tick(60)
-    print(runtimes)
+    print("Runtimes: " + str(runtimes))
+    print("Total collisions: " + str(collision_counter))
     pygame.quit()
     sys.exit()
 

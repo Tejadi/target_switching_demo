@@ -5,7 +5,7 @@ from planning.mpc import CasADiMPC
 from constants import RED, YELLOW, BLUE
 
 class CasADiEgoAgent:
-    def __init__(self, start_pos, goal_pos, target, obstacles, radius=15, target_bound=0.98):
+    def __init__(self, start_pos, goal_pos, target, obstacles, radius=15, target_bound=0.92):
         self.x, self.y = start_pos
         self.start_pos = start_pos
         self.goal_pos = goal_pos

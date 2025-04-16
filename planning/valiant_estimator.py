@@ -26,11 +26,9 @@ class ValiantEstimator:
             
         n = len(self.observations)
         mode_counts = Counter(self.observations)
-        print("Mode_counts is: " + str(mode_counts))
         fingerprint = defaultdict(int)
         for count in mode_counts.values():
             fingerprint[count] += 1
-        print("Fingerprint is: " + str(fingerprint))
         observed_unique_modes = len(mode_counts)
         
         kappa = 2 * self.delta / n
