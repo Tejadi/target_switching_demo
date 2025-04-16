@@ -1,3 +1,5 @@
+from cgitb import reset
+
 import pygame
 import sys
 import math
@@ -18,7 +20,7 @@ from utils.visualization import (
 def setup_simulation():
     obstacles = create_obstacles()
     
-    target = TargetAgent(WIDTH // 2, HEIGHT // 2)
+    target = TargetAgent(WIDTH // 2, HEIGHT // 2) #random.randint(2,4)
     target.add_mode(DynamicMode(GREEN, linear_motion))
     target.add_mode(DynamicMode(GREEN, sine_wave_motion))
     target.add_mode(DynamicMode(GREEN, circular_motion))
@@ -47,74 +49,89 @@ def main():
     pygame.display.set_caption("CasADi MPC with Valiant Estimation and Reduced Obstacles")
     
     target, ego, obstacles = setup_simulation()
-    
+
     clock = pygame.time.Clock()
     font = pygame.font.SysFont(None, 24)
     
 
     legend_items = create_standard_legend()
-    
-    running = True
-    dt = 0.016
-    reset_timer = 0
-    reset_interval = 30
-    
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+    completed_runs = 0
+    runtimes = []
+    collision_counter = 0
+    while completed_runs < 100:
+        running = True
+        dt = 0.016
+        reset_timer = 0
+        reset_interval = 30
+
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     running = False
-                elif event.key == pygame.K_r:
-                    ego.reset()
-                    target.stopped = False 
-                    reset_timer = 0
-                elif event.key == pygame.K_SPACE:
-                    if dt > 0:
-                        dt = 0
-                    else:
-                        dt = 0.016
-        
-        reset_timer += dt
-        if reset_timer >= reset_interval or ego.collision or ego.collision_with_obstacle:
-            if ego.collision or ego.collision_with_obstacle:
-                pygame.time.delay(1000)
-            
-            if not ego.at_goal:
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                    elif event.key == pygame.K_r:
+                        ego.reset()
+                        target.stopped = False
+                        reset_timer = 0
+                    elif event.key == pygame.K_SPACE:
+                        if dt > 0:
+                            dt = 0
+                        else:
+                            dt = 0.016
+
+            if ego.at_goal:
+                reached_goal_time = reset_timer
+                runtimes.append(reached_goal_time)
+                completed_runs+=1
+                running = False
                 ego.reset()
-                target.stopped = False  
+                target.stopped = False
                 reset_timer = 0
-        
+                target.reset()
 
-        target.update(dt, obstacles, should_stop=ego.at_goal)
-        ego.update(dt)
-        
-        screen.fill(WHITE)
-        
-        # Draw obstacles
-        for obstacle in obstacles:
-            obstacle.draw(screen)
-        
-        ego.mpc.draw_scenarios(screen)
-        
-        target.draw(screen)
-        ego.draw(screen)
-        
+            reset_timer += dt
+            if reset_timer >= reset_interval or ego.collision or ego.collision_with_obstacle:
+                if ego.collision or ego.collision_with_obstacle:
+                    collision_counter += 1
+                    pygame.time.delay(1000)
 
-        draw_estimation_stats(screen, font, ego)
-        
+                if not ego.at_goal:
+                    ego.reset()
+                    target.stopped = False
+                    reset_timer = 0
 
-        legend_y = draw_legend(screen, font, legend_items, (WIDTH - 200, 10))
-        
 
-        draw_text(screen, font, "Magenta arrow: Average target trajectory forecast", (WIDTH - 380, legend_y + 20), MAGENTA)
-        
-        pygame.display.flip()
-        
-        if dt > 0:
-            clock.tick(60)
-    
+            target.update(dt, obstacles, should_stop=ego.at_goal)
+            ego.update(dt)
+
+            screen.fill(WHITE)
+
+            # Draw obstacles
+            for obstacle in obstacles:
+                obstacle.draw(screen)
+
+            ego.mpc.draw_scenarios(screen)
+
+            target.draw(screen)
+            ego.draw(screen)
+
+
+            draw_estimation_stats(screen, font, ego)
+
+
+            legend_y = draw_legend(screen, font, legend_items, (WIDTH - 200, 10))
+
+
+            draw_text(screen, font, "Magenta arrow: Average target trajectory forecast", (WIDTH - 380, legend_y + 20), MAGENTA)
+
+            pygame.display.flip()
+
+            if dt > 0:
+                clock.tick(60)
+    print("Runtimes: " + str(runtimes))
+    print("Total collisions: " + str(collision_counter))
     pygame.quit()
     sys.exit()
 
