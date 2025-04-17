@@ -124,7 +124,7 @@ def main():
             legend_y = draw_legend(screen, font, legend_items, (WIDTH - 200, 10))
 
 
-            draw_text(screen, font, "Magenta arrow: Average target trajectory forecast", (WIDTH - 380, legend_y + 20), MAGENTA)
+            draw_text(screen, font, "Magenta arrow: Average target trajectory forecast", (10 , 220), MAGENTA)
 
             pygame.display.flip()
 
