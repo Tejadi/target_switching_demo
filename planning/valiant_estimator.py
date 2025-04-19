@@ -26,11 +26,9 @@ class ValiantEstimator:
             
         n = len(self.observations)
         mode_counts = Counter(self.observations)
-        
         fingerprint = defaultdict(int)
         for count in mode_counts.values():
             fingerprint[count] += 1
-            
         observed_unique_modes = len(mode_counts)
         
         kappa = 2 * self.delta / n
@@ -57,12 +55,12 @@ class ValiantEstimator:
                     r_plus_1 = fingerprint[count + 1] if count + 1 in fingerprint else 0
                     r = fingerprint[count] if count in fingerprint else 1
                     prob_estimates[mode] = ((r_plus_1 + 1) / r) * ((count + 1) / n)
-        
+
         total_prob = sum(prob_estimates.values())
         if total_prob > 0:
             for mode in prob_estimates:
                 prob_estimates[mode] /= total_prob
-                
+
         self.estimated_modes = {
             'observed': observed_unique_modes,
             'estimated_total': observed_unique_modes + round(self.unseen_class_estimate),
