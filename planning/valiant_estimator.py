@@ -103,7 +103,12 @@ class ValiantEstimator:
         
         estimated_total_modes = observed_modes + round(self.unseen_class_estimate)
         
-        required_n = -math.log(1.0 - target_bound) * (estimated_total_modes + 1) / self.c
+        epsilon = 1.0 - target_bound
+        if epsilon <= 0:
+            epsilon = 0.01 
+            
+        n_support = max(1, estimated_total_modes + 1)  
+        required_n = (self.c * (n_support**3)) / (4 * (epsilon**2) * math.log(max(2, n_support)))
         
         return max(0, math.ceil(required_n - n))
         
