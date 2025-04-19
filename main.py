@@ -21,7 +21,7 @@ from agents.dynamic_mode import pursuit_motion, evasion_motion
 def setup_simulation():
     obstacles = create_obstacles()
     
-    target = TargetAgent(WIDTH // 2, HEIGHT // 2) #random.randint(2,4)
+    target = TargetAgent(WIDTH // 2, HEIGHT // 2)
     target.add_mode(DynamicMode(GREEN, linear_motion))
     target.add_mode(DynamicMode(GREEN, sine_wave_motion))
     target.add_mode(DynamicMode(GREEN, circular_motion))
@@ -30,7 +30,7 @@ def setup_simulation():
     target.add_mode(DynamicMode(GREEN, spiral_motion))
     target.add_mode(DynamicMode(GREEN, bounce_motion))
     
-    # Wrap functions that require additional parameters
+
     pursuit_wrapper = lambda target, dt: pursuit_motion(target, dt)
     evasion_wrapper = lambda target, dt: evasion_motion(target, dt)
     
@@ -109,7 +109,7 @@ def main():
 
             screen.fill(WHITE)
 
-            # Draw obstacles
+
             for obstacle in obstacles:
                 obstacle.draw(screen)
 
